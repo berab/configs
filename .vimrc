@@ -35,13 +35,12 @@ inoremap (<space> ()<C-c>
 inoremap [ []<left>
 inoremap [<space> []<C-c>
 inoremap { {}<left>
-inoremap [<space> {}<C-c>
 inoremap {<CR> {<CR>}<ESC>O
 inoremap {;<CR> {<CR>};<ESC>O
 
 nnoremap ,<Tab> :tabnew<CR>
 nnoremap <Tab> :tabn<CR>
 nnoremap <S-Tab> :tabp<CR>
-nnoremap ,n :set nu<CR>
-nnoremap ,N :set nonu<CR>
-
+nnoremap ,n :set rnu<CR>
+nnoremap ,N :set nornu<CR>
+nnoremap ,t :tab ter<CR>
