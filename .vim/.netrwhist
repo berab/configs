@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =6
+let g:netrw_dirhist_6='/etc/lightdm'
+let g:netrw_dirhist_5='/etc/lightdm/lightdm.conf.d'
+let g:netrw_dirhist_4='/etc/default'
+let g:netrw_dirhist_3='/home/kilic/.vim'
+let g:netrw_dirhist_2='/home/kilic/workspace/phd/TinyFFF/data/speech_commands_preprocessed'
+let g:netrw_dirhist_1='/home/kilic/.config/autostart'
+let g:netrw_dirhist_0='/home/kilic/Workspace/LangGPT/frontend/src'
+let g:netrw_dirhist_9='/home/kilic/Workspace/LangGPT'
+let g:netrw_dirhist_8='/home/kilic/Workspace/LangGPT/server/node_modules'
+let g:netrw_dirhist_7='/home/kilic/Workspace/LangGPT'

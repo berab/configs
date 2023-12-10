@@ -2,15 +2,17 @@
 
 set expandtab
 set smartindent
-set tabstop=4 
+set tabstop=4
 set shiftwidth=4
+set rnu
 
 set nocompatible
 
 syntax enable
 filetype plugin on
 
-set path+=**
+"set path+=**
+set path=XXX
 set wildmenu
 
 set cursorline
@@ -23,24 +25,46 @@ let g:netrw_liststyle=3     " tree view
 let g:netrw_list_hide=netrw_gitignore#Hide()
 let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
 
+set complete+=U,s,k,kspell,]
+
 
 " Key Maps
+" ------------ 
+inoremap "" "<C-c>
 inoremap " ""<left>
 inoremap "<space> ""<C-c>
+
+inoremap '' '<C-c>
 inoremap ' ''<left>
 inoremap '<space> ''<C-c>
+
 inoremap (( (<C-c>
 inoremap ( ()<left>
 inoremap (<space> ()<C-c>
+
+inoremap [[ [<C-c>
 inoremap [ []<left>
 inoremap [<space> []<C-c>
+
+inoremap {{ {<C-c>
 inoremap { {}<left>
+inoremap {<space> {}<C-c>
 inoremap {<CR> {<CR>}<ESC>O
 inoremap {;<CR> {<CR>};<ESC>O
+" ------------ 
 
+
+" ------------ 
 nnoremap ,<Tab> :tabnew<CR>
 nnoremap <Tab> :tabn<CR>
 nnoremap <S-Tab> :tabp<CR>
 nnoremap ,n :set rnu<CR>
 nnoremap ,N :set nornu<CR>
 nnoremap ,t :tab ter<CR>
+" ------------ 
+"
+" Folding
+set foldmethod=indent
+"set foldlevel=1
+"set foldclose=none
+
