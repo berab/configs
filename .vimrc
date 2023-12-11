@@ -4,26 +4,26 @@ set expandtab
 set smartindent
 set tabstop=4
 set shiftwidth=4
-set rnu
+set nu rnu
 
 set nocompatible
 
 syntax enable
-filetype plugin on
+filetype plugin indent on
 
 "set path+=**
 set path=XXX
 set wildmenu
 
-set cursorline
-hi CursorLine cterm=NONE ctermbg=31 ctermfg=15
-
-let g:netrw_banner=0        " disable annoying banner
-let g:netrw_browse_split=4  " open in prior window
-let g:netrw_altv=1          " open splits to the right
-let g:netrw_liststyle=3     " tree view
-let g:netrw_list_hide=netrw_gitignore#Hide()
-let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
+"set cursorline
+"hi CursorLine cterm=NONE ctermbg=31 ctermfg=15
+"
+"let g:netrw_banner=0        " disable annoying banner
+"let g:netrw_browse_split=4  " open in prior window
+"let g:netrw_altv=1          " open splits to the right
+"let g:netrw_liststyle=3     " tree view
+"let g:netrw_list_hide=netrw_gitignore#Hide()
+"let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
 
 set complete+=U,s,k,kspell,]
 
@@ -58,13 +58,25 @@ inoremap {;<CR> {<CR>};<ESC>O
 nnoremap ,<Tab> :tabnew<CR>
 nnoremap <Tab> :tabn<CR>
 nnoremap <S-Tab> :tabp<CR>
-nnoremap ,n :set rnu<CR>
-nnoremap ,N :set nornu<CR>
+nnoremap ,n :set nu rnu<CR>
+nnoremap ,N :set nonu nornu<CR>
 nnoremap ,t :tab ter<CR>
 " ------------ 
 "
 " Folding
 set foldmethod=indent
-"set foldlevel=1
+set foldlevel=99
 "set foldclose=none
+
+
+" Vim plug
+call plug#begin('~/.vim/plugged')
+" Rust
+Plug 'rust-lang/rust.vim'
+" Color scheme
+"let g:lightline = {'colorscheme': 'catppuccin_mocha'}
+"let g:airline_theme = 'catppuccin_mocha'
+
+colorscheme habamax
+hi Normal guibg=NONE ctermbg=NONE
 
