@@ -1,6 +1,7 @@
 " General Settings
 
 set expandtab
+set autoindent
 set smartindent
 set tabstop=4
 set shiftwidth=4
@@ -73,10 +74,11 @@ set foldlevel=99
 call plug#begin('~/.vim/plugged')
 " Rust
 Plug 'rust-lang/rust.vim'
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' }
 " Color scheme
 "let g:lightline = {'colorscheme': 'catppuccin_mocha'}
 "let g:airline_theme = 'catppuccin_mocha'
 
-colorscheme habamax
+" colorscheme catppuccin-frappe
 hi Normal guibg=NONE ctermbg=NONE
 
