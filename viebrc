@@ -1,0 +1,49 @@
+" Options
+set adblocker=update
+set downloadpath=/home/kilic/downloads
+set searchengine=https://google.com/search?q=%s
+colorscheme compact
+set useragent=%firefox
+
+" :set redirects+=^https?://(\w+\.)?youtube(-nocookie)?\.com/?(.*)~https://yewtu.be/$3
+" :set redirects+=^https?://(\w+\.)?youtu\.be/?(.*)~https://yewtu.be/watch?v=$2
+
+set dialogalert=show
+set dialogconfirm=show
+set dialogprompt=show
+set downloadmethod=confirm
+set guifontsize=12
+set mintabwidth=0
+set permissioncamera=ask
+set permissioncertificateerror=ask
+set permissiondisplaycapture=ask
+set permissionmediadevices=allow
+set permissionmicrophone=ask
+set permissionpersistentstorage=allow
+set redirecttohttp
+set splitright
+set cache=full
+set suspendonrestore=none
+set tabreopenposition=previous
+set windowtitle="%app"
+
+Options
+" Mappings
+map <C-h> <:history>
+map <C-j> <:downloads>
+map <C-p> <:hardcopy>
+map <C-t> <:tabnew><toExploreMode>
+map <C-S> <:screenshot>
+vmap <C-f> <p.searchText>
+
+" Tab mappings
+map <A-0> <:b 9999>
+map <A-1> <:b 0>
+map <A-2> <:b 1>
+map <A-3> <:b 2>
+map <A-4> <:b 3>
+map <A-5> <:b 4>
+map <A-6> <:b 5>
+map <A-7> <:b 6>
+map <A-8> <:b 7>
+map <A-9> <:b 8>
