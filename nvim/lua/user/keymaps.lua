@@ -6,10 +6,21 @@ local term_opts = { silent = true }
 -- local keymap = vim.api.nvim_set_keymap
 local keymap = vim.keymap.set
 
+-- codecompanion dont close stuff
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = {"companion", "codecompanion", "codecompanionchat"},  -- Adjust this if the filetype is different
+  callback = function()
+    vim.schedule(function()
+      vim.keymap.set("n", "<C-c>", "<Esc>", { buffer = true }) -- Disable in normal mode
+      vim.keymap.set("i", "<C-c>", "<Esc>", { buffer = true }) -- Disable in insert mode
+    end)
+  end,
+})
+
 --Remap space as leader key
 -- keymap("", "<Space>", "<Nop>", opts)
 vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+vim.g.maplocalleader = ","
 -- Modes
 --   normal_mode = "n",
 --   insert_mode = "i",
@@ -27,7 +38,11 @@ keymap("n", "<C-l>", "<C-w>l", opts)
 
 keymap("n", "<C-a>l", "c$", opts)
 keymap("n", "<C-a>s", "c^", opts)
-keymap("n", "<leader>e", ":Lex 30<cr>", opts)
+keymap("n", "<leader>e", ":Vex 30<cr>", opts)
+keymap("n", "<leader>E", ":Ex<cr>", opts)
+
+-- F*ck highlighting omfg
+keymap("n", "<leader>n", ":noh<cr>", opts)
 
 -- Resize with arrows
 keymap("n", "<C-Up>", ":resize +2<CR>", opts)
@@ -38,10 +53,6 @@ keymap("n", "<C-Right>", ":vertical resize +2<CR>", opts)
 -- Navigate buffers
 keymap("n", "<S-l>", ":bnext<CR>", opts)
 keymap("n", "<S-h>", ":bprevious<CR>", opts)
-
--- Insert --
--- Press jk fast to enter
-keymap("i", "jk", "<ESC>", opts)
 
 -- Visual --
 -- Stay in indent mode
@@ -71,3 +82,25 @@ keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
 -- LSP keymaps`
 keymap("n", "<space>lsp", ":LspStop<CR>", opts)
 -- vim.lsp.get
+--
+--CLIPBOARD
+-- " " Copy to clipboard
+keymap("v", "<localleader>y", '"+y')
+keymap("v", "<localleader>Y", '"+yg_')
+keymap("n", "<localleader>y", '"+y')
+keymap("n", "<localleader>yy", '"+yy')
+
+-- " " Paste from clipboard
+keymap("v", "<localleader>p", '"+p')
+keymap("v", "<localleader>P", '"+P')
+keymap("n", "<localleader>p", '"+p')
+keymap("n", "<localleader>P", '"+P')
+
+--- my AI Chat
+keymap("n", "<leader>c", ':CodeCompanionChat Toggle<cr>')
+
+-- " " VimTex. Idk why not workng by default
+keymap("n", "<leader>ll", ":VimtexCompile<cr>")
+keymap("n", "<leader>lk", ":VimtexStop<cr>")
+keymap("n", "<leader>lc", ":VimtexClean<cr>")
+keymap("n", "<leader>lv", ":VimtexView<cr>")

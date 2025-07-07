@@ -1,5 +1,4 @@
--- :help options
-vim.opt.backup = false                          -- creates a backup file
+-- :help options vim.opt.backup = false                          -- creates a backup file
 vim.opt.clipboard = "unnamedplus"               -- allows neovim to access the system clipboard
 vim.opt.cmdheight = 2                           -- more space in the neovim command line for displaying messages
 vim.opt.completeopt = { "menuone", "noselect" } -- mostly just for cmp
@@ -40,9 +39,6 @@ vim.opt.shortmess:append "c"
 vim.opt.foldmethod = "indent"
 vim.opt.foldlevel = 9999
 
-vim.cmd "set whichwrap+=<,>,[,],h,l"
+-- vim.cmd "set whichwrap+=<,>,[,],h,l"
+vim.cmd [[set iskeyword+=-]]
 vim.cmd [[set formatoptions-=cro]] -- TODO: this doesn't seem to work
-
--- spellcheck
-vim.opt.spelllang = 'en_us'
-vim.opt.spell = true

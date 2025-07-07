@@ -1,5 +1,6 @@
 local fn = vim.fn
 
+
 -- Automatically install packer
 local install_path = fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
 if fn.empty(fn.glob(install_path)) > 0 then
@@ -38,16 +39,71 @@ packer.init {
   },
 }
 
+require('lspconfig').harper_ls.setup {}
+
+-- Vimtex config.
+vim.cmd([[let g:vimtex_view_method = 'zathura']])
+vim.cmd([[let g:vimtex_view_general_viewer = 'zathura']])
+vim.cmd([[let g:vimtex_view_general_options = '--unique file:@pdf\#src:@line@tex']])
+vim.cmd([[let g:vimtex_compiler_method = 'pdflatex']])
+vim.cmd([[let g:vimtex_quickfix_enabled = 0]])
+
 -- Install your plugins here
 return packer.startup(function(use)
   -- My plugins here
+  use {
+      'Automattic/harper', 
+  }
+  --
+  use {
+      'tpope/vim-fugitive', 
+  }
+  use({
+  "olimorris/codecompanion.nvim",
+  config = function()
+    require("codecompanion").setup()
+  end,
+  requires = {
+    "nvim-lua/plenary.nvim",
+    "nvim-treesitter/nvim-treesitter",
+  }
+  })
+  
+  use {
+      'lervag/vimtex', 
+  }
   use "wbthomason/packer.nvim" -- Have packer manage itself
   use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
   use "nvim-lua/plenary.nvim" -- Useful lua functions used ny lots of plugins
 
-	-- Colorschemes
+    -- Colorschemes
   use { "folke/tokyonight.nvim", commit = "66bfc2e8f754869c7b651f3f47a2ee56ae557764" }
   use { "lunarvim/darkplus.nvim", commit = "13ef9daad28d3cf6c5e793acfc16ddbf456e1c83" }
+
+  -- Markdown 
+  use 'godlygeek/tabular'
+  use 'preservim/vim-markdown'
+
+  -- vim wiki
+  use 'vimwiki/vimwiki'
+
+  -- Rust
+  use 'rust-lang/rust.vim'
+
+  -- Grammar check
+  vim.g.grammarous_jar_url = 'https://www.languagetool.org/download/archive/LanguageTool-5.9.zip'
+  use "rhysd/vim-grammarous" -- Have packer manage itself
+  -- install without yarn or npm
+  -- use({
+  --     "iamcco/markdown-preview.nvim",
+  --     run = function() vim.fn["mkdp#util#install"]() end,
+  -- })
+  use({
+    "iamcco/markdown-preview.nvim",
+    run = function() vim.fn["mkdp#util#install"]() end,
+  })
+
+  -- use({ "iamcco/markdown-preview.nvim", run = "cd app && npm install", setup = function() vim.g.mkdp_filetypes = { "markdown" } end, ft = { "markdown" }, })
 
     -- cmp plugins
   use "hrsh7th/nvim-cmp" -- The completion plugin
@@ -68,18 +124,15 @@ return packer.startup(function(use)
   use "williamboman/mason-lspconfig.nvim" -- simple to use language server installer
   use 'jose-elias-alvarez/null-ls.nvim' -- LSP diagnostics and code actions
 
-  -- Telescope
-  use "nvim-telescope/telescope.nvim"
-  use 'nvim-telescope/telescope-media-files.nvim'
 
-  -- Treesitter
-  use  "nvim-treesitter/nvim-treesitter"
+    -- install without yarn or npm
+    -- use({
+    --     "iamcco/markdown-preview.nvim",
+    --     run = function() vim.fn["mkdp#util#install"]() end,
+    -- })
 
   -- Autopairs
-  use {
-	"windwp/nvim-autopairs",
-    config = function() require("nvim-autopairs").setup {} end
-  }
+  use "windwp/nvim-autopairs"
 
   -- Comments
   use {
@@ -177,4 +230,3 @@ return packer.startup(function(use)
   }
 
 end)
-
