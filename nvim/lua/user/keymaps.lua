@@ -41,6 +41,10 @@ keymap("n", "<C-a>s", "c^", opts)
 keymap("n", "<leader>e", ":Vex 30<cr>", opts)
 keymap("n", "<leader>E", ":Ex<cr>", opts)
 
+keymap("n", "<leader>wy", ":set wrap<cr>", opts)
+keymap("n", "<leader>wn", ":set nowrap<cr>", opts)
+
+
 -- F*ck highlighting omfg
 keymap("n", "<leader>n", ":noh<cr>", opts)
 
