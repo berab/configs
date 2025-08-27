@@ -143,6 +143,8 @@ return packer.startup(function(use)
 
   }
 
+  -- use 'wakatime/vim-wakatime'
+
   -- Status bar
   use {
   'nvim-lualine/lualine.nvim',

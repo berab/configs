@@ -68,6 +68,9 @@ tiling_drag modifier titlebar
 # start a terminal
 bindsym $mod+Return exec gnome-terminal
 
+# start a terminal
+bindsym $mod+z exec zen
+
 # kill focused window
 bindsym $mod+q kill
 
@@ -176,9 +179,13 @@ bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+q exec "i3-nagbar -t warning -m 'You pressed the shutdown shortcut. Do you really want to exit i3? This will end your shutdown the computer.' -B 'Yes, shutdown' 'systemctl poweroff'"
+bindsym $mod+Shift+p exec "i3-nagbar -t warning -m 'You pressed the reboot shortcut. Do you really want to exit i3? This will end your reboot the computer.' -B 'Yes, reboot' 'systemctl reboot'"
+
 
 # automatic set focus new window if it opens on another workspace than the current:
 for_window [class=i3-sensible-terminal] focus
+for_window [class=Chromium] focus off
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -219,22 +226,21 @@ client.background       #ffffff
 
 # Autostart apps as you like
 # exec --no-startup-id sleep 1 && i3-sensible-terminal
-# exec --no-startup-id sleep 1 && firefox -P
+# exec --no-startup-id sleep 1 && zen
 # exec --no-startup-id sleep 1 && thunderbird
 # exec --no-startup-id sleep 2 && slack
 # exec --no-startup-id sleep 2 && clickup
 
-assign [class="i3-sensible-terminal"] $ws1
-assign [class="vieb"] $ws1
-assign [class="firefox"] $ws2
-assign [class="thunderbird"] $ws3
-assign [class="clickup"] $ws4
+# assign [class="i3-sensible-terminal"] $ws1
+# assign [class="zen"] $ws2
+# assign [class="thunderbird"] $ws3
+# assign [class="clickup"] $ws4
 assign [class="Slack"] $ws9
 assign [class="Chromium"] $ws9
 
 exec_always --no-startup-id pasystray --always-notify
 
-exec --no-startup-id /home/kilic/miniconda3/bin/python -u /home/kilic/workspace/auto_idata/idata_automated.py
+# exec --no-startup-id /home/kilic/miniconda3/bin/python -u /home/kilic/workspace/auto_idata/idata_automated.py
 bindsym $mod+Up exec pactl set-sink-volume @DEFAULT_SINK@ +4%
 bindsym $mod+Down exec pactl set-sink-volume @DEFAULT_SINK@ -4%
 bindsym $mod+m exec pactl set-sink-mute @DEFAULT_SINK@ toggle
@@ -248,3 +254,5 @@ exec --no-startup-id xss-lock -- my-lock-command
 exec --no-startup-id xset s off
 exec --no-startup-id xset -dpms
 exec --no-startup-id xset s noblank
+
+exec ~/apps/startups.sh

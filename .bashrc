@@ -1,93 +1,240 @@
+# wakatime for bash
 #
-# ~/.bashrc
+# include this file in your "~/.bashrc" file with this command:
+#   . path/to/bash-wakatime.sh
 #
+# or this command:
+#   source path/to/bash-wakatime.sh
+#
+# Don't forget to create and configure your "~/.wakatime.cfg" file.
+
+# hook function to send wakatime a tick
+pre_prompt_command() {
+    version="1.0.0"
+    entity=$(echo $(fc -ln -0) | cut -d ' ' -f1)
+    [ -z "$entity" ] && return # $entity is empty or only whitespace
+    $(git rev-parse --is-inside-work-tree 2> /dev/null) && local project="$(basename $(git rev-parse --show-toplevel))" || local project="Terminal"
+    (~/.wakatime/wakatime-cli --write --plugin "bash-wakatime/$version" --entity-type app --project "$project" --entity "$entity" 2>&1 > /dev/null &)
+}
+
+PROMPT_COMMAND="pre_prompt_command; $PROMPT_COMMAND"
+
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
 
 # If not running interactively, don't do anything
-[[ $- != *i* ]] && return
+case $- in
+    *i*) ;;
+      *) return;;
+esac
 
-[[ -f ~/.welcome_screen ]] && . ~/.welcome_screen
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
 
-_set_liveuser_PS1() {
-    PS1='[\u@\h \W]\$ '
-    if [ "$(whoami)" = "liveuser" ] ; then
-        local iso_version="$(grep ^VERSION= /usr/lib/endeavouros-release 2>/dev/null | cut -d '=' -f 2)"
-        if [ -n "$iso_version" ] ; then
-            local prefix="eos-"
-            local iso_info="$prefix$iso_version"
-            PS1="[\u@$iso_info \W]\$ "
-        fi
-    fi
-}
-_set_liveuser_PS1
-unset -f _set_liveuser_PS1
+# append to the history file, don't overwrite it
+shopt -s histappend
 
-ShowInstallerIsoInfo() {
-    local file=/usr/lib/endeavouros-release
-    if [ -r $file ] ; then
-        cat $file
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=1000
+HISTFILESIZE=2000
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+#shopt -s globstar
+
+# make less more friendly for non-text input files, see lesspipe(1)
+#[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+#force_color_prompt=yes
+
+if [ -n "$force_color_prompt" ]; then
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	# We have color support; assume it's compliant with Ecma-48
+	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+	# a case would tend to support setf rather than setaf.)
+	color_prompt=yes
     else
-        echo "Sorry, installer ISO info is not available." >&2
+	color_prompt=
+    fi
+fi
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset color_prompt force_color_prompt
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+# colored GCC warnings and errors
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# some more ls aliases
+alias ll='ls -l'
+alias la='ls -A'
+alias l='ls -CF'
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# ZOXIDE
+_z_cd() {
+    cd "$@" || return "$?"
+
+    if [ "$_ZO_ECHO" = "1" ]; then
+        echo "$PWD"
     fi
 }
 
-
-alias ls='ls --color=auto'
-alias ll='ls -lav --ignore=..'   # show long listing of all except ".."
-alias l='ls -lav --ignore=.?*'   # show long listing but no hidden dotfiles except "."
-
-[[ "$(whoami)" = "root" ]] && return
-
-[[ -z "$FUNCNEST" ]] && export FUNCNEST=100          # limits recursive functions, see 'man bash'
-
-## Use the up and down arrow keys for finding a command in history
-## (you can write some initial letters of the command first).
-bind '"\e[A":history-search-backward'
-bind '"\e[B":history-search-forward'
-
-################################################################################
-## Some generally useful functions.
-## Consider uncommenting aliases below to start using these functions.
-##
-## October 2021: removed many obsolete functions. If you still need them, please look at
-## https://github.com/EndeavourOS-archive/EndeavourOS-archiso/raw/master/airootfs/etc/skel/.bashrc
-
-_open_files_for_editing() {
-    # Open any given document file(s) for editing (or just viewing).
-    # Note1:
-    #    - Do not use for executable files!
-    # Note2:
-    #    - Uses 'mime' bindings, so you may need to use
-    #      e.g. a file manager to make proper file bindings.
-
-    if [ -x /usr/bin/exo-open ] ; then
-        echo "exo-open $@" >&2
-        setsid exo-open "$@" >& /dev/null
-        return
+z() {
+    if [ "$#" -eq 0 ]; then
+        _z_cd ~
+    elif [ "$#" -eq 1 ] && [ "$1" = '-' ]; then
+        if [ -n "$OLDPWD" ]; then
+            _z_cd "$OLDPWD"
+        else
+            echo 'zoxide: $OLDPWD is not set'
+            return 1
+        fi
+    else
+        _zoxide_result="$(zoxide query -- "$@")" && _z_cd "$_zoxide_result"
     fi
-    if [ -x /usr/bin/xdg-open ] ; then
-        for file in "$@" ; do
-            echo "xdg-open $file" >&2
-            setsid xdg-open "$file" >& /dev/null
-        done
-        return
-    fi
-
-    echo "$FUNCNAME: package 'xdg-utils' or 'exo' is required." >&2
 }
 
-#------------------------------------------------------------
+zi() {
+    _zoxide_result="$(zoxide query -i -- "$@")" && _z_cd "$_zoxide_result"
+}
 
-## Aliases for the functions above.
-## Uncomment an alias if you want to use it.
-##
 
-# alias ef='_open_files_for_editing'     # 'ef' opens given file(s) for editing
-# alias pacdiff=eos-pacdiff
-################################################################################
+alias za='zoxide add'
 
-alias TelegramDesktop='/opt/Telegram/Telegram'
-alias Telegram='/opt/Telegram/Telegram'
-alias telegram='/opt/Telegram/Telegram'
+alias zq='zoxide query'
+alias zqi='zoxide query -i'
+
+alias zr='zoxide remove'
+zri() {
+    _zoxide_result="$(zoxide query -i -- "$@")" && zoxide remove "$_zoxide_result"
+}
+
+
+_zoxide_hook() {
+    if [ -z "${_ZO_PWD}" ]; then
+        _ZO_PWD="${PWD}"
+    elif [ "${_ZO_PWD}" != "${PWD}" ]; then
+        _ZO_PWD="${PWD}"
+        zoxide add "$(pwd -L)"
+    fi
+}
+
+case "$PROMPT_COMMAND" in
+    *_zoxide_hook*) ;;
+    *) PROMPT_COMMAND="_zoxide_hook${PROMPT_COMMAND:+;${PROMPT_COMMAND}}" ;;
+esac
+alias cd='z'
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+# Unwanted dirs
+rm -rf ~/GP_HTML
+rm -drf ~/Downloads
+
+# Turn off main display
+IF_OFFICE_DISPLAY="$(xrandr -q | grep 'DP-1-1 connected' | wc -l)"
+IF_SINAN_DISPLAY="$(xrandr -q | grep 'HDMI-1 connected' | wc -l)"
+IF_HOME_DISPLAY="$(xrandr -q | grep 'DP-1 connected' | wc -l)"
+if [[ $IF_OFFICE_DISPLAY -gt 0 ]]; then
+    source /home/kilic/.screenlayout/main_3k_hdmi.sh
+elif [[ $IF_SINAN_DISPLAY -gt 0 ]]; then
+    # xmodmap -e 'keycode 49 = Escape' 
+    source /home/kilic/.screenlayout/sinan.sh
+elif [[ $IF_HOME_DISPLAY -gt 0 ]]; then
+    source /home/kilic/.screenlayout/home.sh
+else
+    # xmodmap -e 'keycode 49 = Escape' 
+    xrandr --output eDP-1 --mode 1920x1080 --pos 0x0 --rotate normal --output DP-1 --off --output HDMI-1 --off --output DP-2 --off --output HDMI-2 --off 
+fi
+
+# encrpypt
+alias ansien='ansible-vault encrypt'
+alias ansidec='ansible-vault decrypt'
+
+# Remote and clusters
+alias sshhpc='ssh renanberan.kilic@192.168.115.242'
+export HPC='renanberan.kilic@hpc.unitn.it'
+
+alias sshmarzola='ssh renanberan.kilic@marzola.disi.unitn.it'
+export MARZOLA='renanberan.kilic@marzola.disi.unitn.it'
+
+alias sshdiol1='ssh beran@diol-ws1.disi.unitn.it'
+alias sshws1='ssh beran@diol-ws1.disi.unitn.it'
+alias sshggpu1='ssh beran@10.196.36.136'
+export GGPU1='beran@10.196.36.136'
+export WS1='beran@10.196.36.136'
+
+alias sshdiol2='ssh beran@diol-ws2.disi.unitn.it'
+alias sshws2='ssh beran@diol-ws2.disi.unitn.it'
+alias sshggpu2='ssh beran@10.196.36.137'
+export GGPU2='beran@10.196.36.137'
+export WS2='beran@10.196.36.137'
+
+#viMTerm
+set -o vi
+export EDITOR='/usr/bin/vim'
+
+# Cool stuff
+# echo "Sup!" | figlet | lolcat && echo
+alias ccat='pygmentize -g'
+
+export TERM=xterm-256color
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
@@ -102,124 +249,69 @@ else
     fi
 fi
 unset __conda_setup
-conda activate torch22
 # <<< conda initialize <<<
+rm -rf javasharedresources/
 
-# <<< personal configs <<<
+export BROWSER='firefox'
+alias energia='/home/kilic/apps/energia-1.8.10E23/energia'
 
-# # Counting number of displays connected
-N_DISPLAY="$(xrandr -q | grep ' connected' | wc -l)"
+alias ccstudio='/home/kilic/ti/ccs2011/ccs/theia/ccstudio'
 
-if [[ $N_DISPLAY -gt 1 ]]
-then
-    #Disable the laptop screen
-    xrandr --output eDP-1 --off 
-    xrandr --output HDMI-1 --mode "1920x1080"
-else
-    xrandr --output eDP-1 --auto
-fi
-# Enable laptop screen again
-# xrandr --output eDP-1 --auto
+export PATH="$PATH:/home/kilic/apps/SEGGER/JLink_Linux_V798e_x86_64"
+export PATH="$PATH:/home/kilic/apps/SEGGER/segger_embedded_studio_8.16a/bin"
+export PATH="$PATH:/opt/SEGGER/JLink_Linux_V798e_x86_64"
+export PATH="$PATH:/usr/local/gcc-13.3.0/bin"
+export PATH="$PATH:/home/kilic/ti/ccs2011/ccs/theia/ccstudio"
 
-#viMTerm
-set -o vi
-export EDITOR='/usr/bin/vim'
+#Apollo
+alias apollo_debugserver='JLinkGDBServerCLExe -singlerun -nogui -port 61238 -device AMAP42KL-KBR'
 
-# Internal keyboard default:
-# xmodmap ~/.Xmodmap.orig
-# IS_EXT_KEYBOARD="$(lsusb | grep '1dgb:0002' | wc -l)" # TODO: change the id
-IS_EXT_KEYBOARD=0
-if [[ $IS_EXT_KEYBOARD -gt 0 ]]
-then
-    xmodmap ~/.Xmodmap_external
-else
-    xmodmap ~/.Xmodmap
-fi
+#ST
+export ST_PATH="/opt/st/stm32cubeide_1.16.0/plugins/"
+export ST_CP_PATH="${ST_PATH}/com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.linux64_2.1.400.202404281720/tools/bin"
 
+alias st_debugserver='ST-LINK_gdbserver -p 61238 -l 1 -d -s -cp ${ST_CP_PATH} -m 0 -g'
 
+# STM
+export PATH="$PATH:/usr/local/LinkServer"
+export PATH="$PATH:/opt/st/stm32cubeide_1.16.0/plugins/com.st.stm32cube.ide.mcu.externaltools.stlink-gdb-server.linux64_2.1.400.202404281720/tools/bin"
+export PATH="$PATH:/opt/st/stm32cubeide_1.16.0/plugins/com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.linux64_2.1.400.202404281720/tools/bin"
+export PATH="$PATH:/home/kilic/apps/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin/"
+# export PATH="$PATH:/home/kilic/apps/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi/bin/"
+#export PATH="$PATH:/opt/st/stm32cubeide_1.16.0/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.linux64_1.0.200.202406132123/tools/bin"
+export PATH="$PATH:$HOME/apps/st/stm32cubeide_1.16.0/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.12.3.rel1.linux64_1.0.200.202406132123/tools/bin/"
 
-# <<< personal configs <<<
+alias "STM32CubeMX"="/home/kilic/apps/STM32CubeMX/STM32CubeMX"
+
+conda deactivate
+conda activate
+alias "unitnvpn"="globalprotect connect --portal vpn-out.icts.unitn.it"
+TMPDIR="~/.local/tmp"
 . "$HOME/.cargo/env"
 
-# Dagshub
-export DAGSHUB_TOKEN=172e67799e39f154e363e4fd44cb6e5e35b40398
+rpl() {
+  if [ "$#" -ne 3 ]; then
+    echo "Usage: rpl<directory> <old_string> <new_string>"
+    return 1
+  fi
 
-# Cool stuff
-echo "Sup!" | figlet | lolcat && echo
-alias ccat='pygmentize -g'
+  dir="$1"
+  old="$2"
+  new="$3"
 
-# Others
-rm -df ~/Downloads
-rm -df ~/ti
+  find "$dir" -type f -exec sed -i "s/${old//\//\\/}/${new//\//\\/}/g" {} +
+}
 
-# General cds
-alias cddown='cd /home/kilic/downloads'
-alias cddoc='cd /home/kilic/documents'
-alias cdws='cd /home/kilic/workspace'
+# Git stuff
+alias store_token="git config --global credential.helper store" # Do before using the token
 
-# Project spesific
-alias cdtinyfff='cd /home/kilic/workspace/phd/TinyFFF'
-export MLFLOW_TRACKING_URI=https://dagshub.com/leocus4/TinyFFF.mlflow 
-export MLFLOW_TRACKING_USERNAME=berab 
-export MLFLOW_TRACKING_PASSWORD=5caf0258548d586452a73543b1f29844fcf78d81
+# VIM AI stuff
+alias vim=nvim
+export PATH="$HOME/apps/zen/:$PATH"
 
-#alias ccs='pushd /home/kilic/desktop/ti/ccs1250/ccs/eclipse && ./ccstudio && popd'
-#To find occurances in files:
-#$ grep -oi file file.txt
-set -o ignoreeof
+# Screen saver off
+xset s off
+xset -dpms 
+xset s noblank
 
-# Remote and clusters
-alias sshsustainhp='ssh kilic@10.196.235.227'
-export SUSTAINHP='kilic@10.196.235.227'
-
-alias sshhpc='ssh renanberan.kilic@hpc2.unitn.it'
-export HPC='renanberan.kilic@hpc2.unitn.it'
-
-alias sshmarzola='ssh renanberan.kilic@marzola.disi.unitn.it'
-export MARZOLA='renanberan.kilic@marzola.disi.unitn.it'
-
-alias sshgpu='ssh beran@10.196.37.190'
-export ggpu='beran@10.196.37.190'
-
-alias sshgpu2='ssh beran@10.196.37.153'
-export ggpu2='beran@10.196.37.153'
-
-# Firefox
-alias firefoxuni='firefox -P kilic-unitn'
-
-# EdgeAI
-alias stm32ai='/opt/stm32ai/stm32ai'
-alias mspd='/home/kilic/mspdebug/mspdebug'
-
-# NVIM
-alias vim='nvim'
-export NVCFG='/home/kilic/.config/nvim/'
-
-# LaTeX
-alias texpdf='latexmk -pdf '
-
-# llvm and enzyme
-export LLVMEN='/home/kilic/workspace/scratch/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-16.so'
-export CLANGEN='/home/kilic/workspace/scratch/Enzyme/enzyme/build/Enzyme/ClangEnzyme-16.so'
-alias llvmopt='/home/kilic/workspace/scratch/llvm-project/build/bin/opt'
-export LLVM_PATH='/home/kilic/workspace/scratch/llvm-project/build'
-
-# encrpypt
-alias ansien='ansible-vault encrypt'
-alias ansidec='ansible-vault decrypt'
-
-#doc2pdf
-alias doc2pdf='abiword --to=pdf'
-
-#keyboard language
-setxkbmap us
-xset -dpms # No Sleeping
-alias readmevisualizer='grip'
-alias arduino-ide='/home/kilic/.local/arduino-ide_2.3.1_Linux_64bit/arduino-ide'
-
-#T TVM
-export TVM_HOME=/home/kilic/downloads/tvm
-export PYTHONPATH=$TVM_HOME/python:${PYTHONPATH}
-
-export WANB='4cf2bd4f5da9b3bb639b76402564878f8b6d4125'
-alias cddaily='cd /home/kilic/documents/phd_daily'
+export HYDRA_FULL_ERROR=1
