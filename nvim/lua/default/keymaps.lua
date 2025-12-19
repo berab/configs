@@ -11,8 +11,8 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = {"companion", "codecompanion", "codecompanionchat"},  -- Adjust this if the filetype is different
   callback = function()
     vim.schedule(function()
-      vim.keymap.set("n", "<C-c>", "<Esc>", { buffer = true }) -- Disable in normal mode
-      vim.keymap.set("i", "<C-c>", "<Esc>", { buffer = true }) -- Disable in insert mode
+      keymap("n", "<C-c>", "<Esc>", { buffer = true }) -- Disable in normal mode
+      keymap("i", "<C-c>", "<Esc>", { buffer = true }) -- Disable in insert mode
     end)
   end,
 })
@@ -57,6 +57,7 @@ keymap("n", "<C-Right>", ":vertical resize +2<CR>", opts)
 -- Navigate buffers
 keymap("n", "<S-l>", ":bnext<CR>", opts)
 keymap("n", "<S-h>", ":bprevious<CR>", opts)
+keymap("n", "<leader>d", ":bd<CR>", opts)
 
 -- Visual --
 -- Stay in indent mode
@@ -108,3 +109,13 @@ keymap("n", "<leader>ll", ":VimtexCompile<cr>")
 keymap("n", "<leader>lk", ":VimtexStop<cr>")
 keymap("n", "<leader>lc", ":VimtexClean<cr>")
 keymap("n", "<leader>lv", ":VimtexView<cr>")
+
+-- Telescope keybindings
+local builtin = require('telescope.builtin')
+keymap('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
+keymap('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
+keymap('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
+keymap('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+
+-- Terminal
+keymap("n", "<leader>t", ":TermNew<cr>", opts)

@@ -34,7 +34,7 @@ bindsym $mod+Shift+Tab workspace prev
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-#font pango:DejaVu Sans Mono 8
+font pango:DejaVu Sans Mono 9
 
 # Start XDG autostart .desktop files using dex. See also
 # https://wiki.archlinux.org/index.php/XDG_Autostart
@@ -75,16 +75,11 @@ bindsym $mod+z exec zen
 bindsym $mod+q kill
 
 # Lock the system
-bindsym $mod+x exec i3lock -i  ~/documents/imgs/wps/i3-lock.png
+bindsym $mod+x exec i3lock -i  ~/.config/i3/i3-lock-screen-2.png
 
-# start dmenu (a program launcher)
-bindsym $mod+d exec --no-startup-id dmenu_run
 
 # A more modern dmenu replacement is rofi:
-# bindcode $mod+40 exec "rofi -modi drun,run -show drun"
-# There also is i3-dmenu-desktop which only displays applications shipping a
-# .desktop file. It is a wrapper around dmenu, so you need that installed.
-# bindcode $mod+40 exec --no-startup-id i3-dmenu-desktop
+bindcode $mod+40 exec "rofi -show run -modi ssh,drun,run"
 
 # change focus
 bindsym $mod+j focus down
@@ -100,8 +95,6 @@ bindsym $mod+Shift+l move right
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
-# bindsym $mod+Down focus down
-# bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
 # alternatively, you can use the cursor keys:
@@ -225,30 +218,13 @@ client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
 client.background       #ffffff
 
 # Autostart apps as you like
-# exec --no-startup-id sleep 1 && i3-sensible-terminal
-# exec --no-startup-id sleep 1 && zen
-# exec --no-startup-id sleep 1 && thunderbird
-# exec --no-startup-id sleep 2 && slack
-# exec --no-startup-id sleep 2 && clickup
-
-# assign [class="i3-sensible-terminal"] $ws1
-# assign [class="zen"] $ws2
-# assign [class="thunderbird"] $ws3
-# assign [class="clickup"] $ws4
 assign [class="Slack"] $ws9
-assign [class="Chromium"] $ws9
 
-exec_always --no-startup-id pasystray --always-notify
+exec --no-startup-id pasystray --always-notify
 
-# exec --no-startup-id /home/kilic/miniconda3/bin/python -u /home/kilic/workspace/auto_idata/idata_automated.py
 bindsym $mod+Up exec pactl set-sink-volume @DEFAULT_SINK@ +4%
 bindsym $mod+Down exec pactl set-sink-volume @DEFAULT_SINK@ -4%
 bindsym $mod+m exec pactl set-sink-mute @DEFAULT_SINK@ toggle
-
-# pactl get-default-source
-# pactl get-default-sink
-# bindsym $mod+Up exec pactl set-sink-port alsa_output.pci-0000_00_1f.3.analog-stere         
-# bindsym $mod+Up exec pactl set-sink-port bluez_output.B0_38_E2_1E_2A_1A.1            
 
 exec --no-startup-id xss-lock -- my-lock-command
 exec --no-startup-id xset s off

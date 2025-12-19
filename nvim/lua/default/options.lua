@@ -1,4 +1,5 @@
--- :help options vim.opt.backup = false                          -- creates a backup file
+-- :help options
+vim.opt.backup = false                          -- creates a backup file
 vim.opt.clipboard = "unnamedplus"               -- allows neovim to access the system clipboard
 vim.opt.cmdheight = 2                           -- more space in the neovim command line for displaying messages
 vim.opt.completeopt = { "menuone", "noselect" } -- mostly just for cmp
@@ -15,7 +16,7 @@ vim.opt.smartindent = true                      -- make indenting smarter again
 vim.opt.splitbelow = true                       -- force all horizontal splits to go below current window
 vim.opt.splitright = true                       -- force all vertical splits to go to the right of current window
 vim.opt.swapfile = false                        -- creates a swapfile
--- vim.opt.termguicolors = true                    -- set term gui colors (most terminals support this)
+vim.opt.termguicolors = true                    -- set term gui colors (most terminals support this)
 vim.opt.timeoutlen = 1000                       -- time to wait for a mapped sequence to complete (in milliseconds)
 vim.opt.undofile = true                         -- enable persistent undo
 vim.opt.updatetime = 300                        -- faster completion (4000ms default)
@@ -39,6 +40,9 @@ vim.opt.shortmess:append "c"
 vim.opt.foldmethod = "indent"
 vim.opt.foldlevel = 9999
 
--- vim.cmd "set whichwrap+=<,>,[,],h,l"
-vim.cmd [[set iskeyword+=-]]
+vim.cmd "set whichwrap+=<,>,[,],h,l"
 vim.cmd [[set formatoptions-=cro]] -- TODO: this doesn't seem to work
+
+-- spellcheck
+vim.opt.spelllang = 'en_us'
+vim.opt.spell = true
