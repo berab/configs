@@ -34,7 +34,7 @@
       ((string_fragment) @injection.content
         (#set! injection.language "regex")))
   ]
-  (#lua-match? @_func "^%a*%.*match$")
+  (#match? @_func "(^|\\.)match$")
   (#set! injection.combined))
 
 (binding
@@ -48,46 +48,7 @@
       ((string_fragment) @injection.content
         (#set! injection.language "bash")))
   ]
-  (#lua-match? @_path "^%a+Phase$"))
-
-(binding
-  attrpath: (attrpath
-    (identifier) @_path)
-  expression: [
-    (string_expression
-      ((string_fragment) @injection.content
-        (#set! injection.language "bash")))
-    (indented_string_expression
-      ((string_fragment) @injection.content
-        (#set! injection.language "bash")))
-  ]
-  (#lua-match? @_path "^pre%a+$"))
-
-(binding
-  attrpath: (attrpath
-    (identifier) @_path)
-  expression: [
-    (string_expression
-      ((string_fragment) @injection.content
-        (#set! injection.language "bash")))
-    (indented_string_expression
-      ((string_fragment) @injection.content
-        (#set! injection.language "bash")))
-  ]
-  (#lua-match? @_path "^post%a+$"))
-
-(binding
-  attrpath: (attrpath
-    (identifier) @_path)
-  expression: [
-    (string_expression
-      ((string_fragment) @injection.content
-        (#set! injection.language "bash")))
-    (indented_string_expression
-      ((string_fragment) @injection.content
-        (#set! injection.language "bash")))
-  ]
-  (#lua-match? @_path "^script$"))
+  (#match? @_path "(^\\w+(Phase|Hook|Check)|(pre|post)[A-Z]\\w+|script)$"))
 
 (apply_expression
   function: (_) @_func
@@ -106,8 +67,8 @@
             ((string_fragment) @injection.content
               (#set! injection.language "bash")))
         ])))
-  (#lua-match? @_func "^%a*%.*writeShellApplication$")
-  (#lua-match? @_path "^text$")
+  (#match? @_func "(^|\\.)writeShellApplication$")
+  (#match? @_path "^text$")
   (#set! injection.combined))
 
 (apply_expression
@@ -122,7 +83,7 @@
       ((string_fragment) @injection.content
         (#set! injection.language "bash")))
   ]
-  (#lua-match? @_func "^%a*%.*runCommand%a*$")
+  (#match? @_func "(^|\\.)runCommand((No)?CC)?(Local)?$")
   (#set! injection.combined))
 
 ((apply_expression
@@ -136,35 +97,7 @@
       ((string_fragment) @injection.content
         (#set! injection.language "bash")))
   ])
-  (#lua-match? @_func "^%a*%.*writeBash%a*$")
-  (#set! injection.combined))
-
-((apply_expression
-  function: (apply_expression
-    function: (_) @_func)
-  argument: [
-    (string_expression
-      ((string_fragment) @injection.content
-        (#set! injection.language "bash")))
-    (indented_string_expression
-      ((string_fragment) @injection.content
-        (#set! injection.language "bash")))
-  ])
-  (#lua-match? @_func "^%a*%.*writeDash%a*$")
-  (#set! injection.combined))
-
-((apply_expression
-  function: (apply_expression
-    function: (_) @_func)
-  argument: [
-    (string_expression
-      ((string_fragment) @injection.content
-        (#set! injection.language "bash")))
-    (indented_string_expression
-      ((string_fragment) @injection.content
-        (#set! injection.language "bash")))
-  ])
-  (#lua-match? @_func "^%a*%.*writeShellScript%a*$")
+  (#match? @_func "(^|\\.)write(Bash|Dash|ShellScript)(Bin)?$")
   (#set! injection.combined))
 
 ((apply_expression
@@ -178,7 +111,7 @@
       ((string_fragment) @injection.content
         (#set! injection.language "fish")))
   ])
-  (#lua-match? @_func "^%a*%.*writeFish%a*$")
+  (#match? @_func "(^|\\.)writeFish(Bin)?$")
   (#set! injection.combined))
 
 ((apply_expression
@@ -193,12 +126,13 @@
       ((string_fragment) @injection.content
         (#set! injection.language "haskell")))
   ])
-  (#lua-match? @_func "^%a*%.*writeHaskell%a*$")
+  (#match? @_func "(^|\\.)writeHaskell(Bin)?$")
   (#set! injection.combined))
 
 ((apply_expression
   function: (apply_expression
-    function: (_) @_func)
+    function: (apply_expression
+      function: (_) @_func))
   argument: [
     (string_expression
       ((string_fragment) @injection.content
@@ -207,12 +141,13 @@
       ((string_fragment) @injection.content
         (#set! injection.language "javascript")))
   ])
-  (#lua-match? @_func "^%a*%.*writeJS%a*$")
+  (#match? @_func "(^|\\.)writeJS(Bin)?$")
   (#set! injection.combined))
 
 ((apply_expression
   function: (apply_expression
-    function: (_) @_func)
+    function: (apply_expression
+      function: (_) @_func))
   argument: [
     (string_expression
       ((string_fragment) @injection.content
@@ -221,12 +156,13 @@
       ((string_fragment) @injection.content
         (#set! injection.language "perl")))
   ])
-  (#lua-match? @_func "^%a*%.*writePerl%a*$")
+  (#match? @_func "(^|\\.)writePerl(Bin)?$")
   (#set! injection.combined))
 
 ((apply_expression
   function: (apply_expression
-    function: (_) @_func)
+    function: (apply_expression
+      function: (_) @_func))
   argument: [
     (string_expression
       ((string_fragment) @injection.content
@@ -235,11 +171,13 @@
       ((string_fragment) @injection.content
         (#set! injection.language "python")))
   ])
-  (#lua-match? @_func "^%a*%.*writePy%a*%d*%a*$")
+  (#match? @_func "(^|\\.)write(PyPy|Python)[23](Bin)?$")
   (#set! injection.combined))
 
 ((apply_expression
-  function: (_) @_func
+  function: (apply_expression
+    function: (apply_expression
+      function: (_) @_func))
   argument: [
     (string_expression
       ((string_fragment) @injection.content
@@ -248,38 +186,20 @@
       ((string_fragment) @injection.content
         (#set! injection.language "rust")))
   ])
-  (#lua-match? @_func "^%a*%.*writeRust%a*$")
+  (#match? @_func "(^|\\.)writeRust(Bin)?$")
   (#set! injection.combined))
-
-; (runTest) testScript
-(apply_expression
-  function: (_) @_func
-  argument: (_
-    (_)*
-    (_
-      (binding
-        attrpath: (attrpath) @_func_name
-        expression: (_
-          (string_fragment) @injection.content
-          (#set! injection.language "python")))
-      (#eq? @_func_name "testScript")
-      (#lua-match? @_func "^.*%.*runTest$")
-      (#set! injection.combined))))
 
 ; (nixosTest) testScript
-(apply_expression
-  function: (_) @_func
-  argument: (_
-    (_)*
+((binding
+  attrpath: (attrpath) @_attr_name
+  (#eq? @_attr_name "nodes"))
+  (binding
+    attrpath: (attrpath) @_func_name
+    (#eq? @_func_name "testScript")
     (_
-      (binding
-        attrpath: (attrpath) @_func_name
-        expression: (_
-          (string_fragment) @injection.content
-          (#set! injection.language "python")))
-      (#eq? @_func_name "testScript")
-      (#lua-match? @_func "^.*%.*nixosTest$")
-      (#set! injection.combined))))
+      (string_fragment) @injection.content
+      (#set! injection.language "python")))
+  (#set! injection.combined))
 
 ; home-manager Neovim plugin config
 (attrset_expression

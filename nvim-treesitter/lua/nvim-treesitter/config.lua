@@ -140,12 +140,8 @@ function M.norm_languages(languages, skip)
   languages = vim.tbl_filter(
     --- @param v string
     function(v)
-      if parsers[v] ~= nil then
-        return true
-      else
-        require('nvim-treesitter.log').warn('skipping unsupported language: ' .. v)
-        return false
-      end
+      -- TODO(lewis6991): warn of any unknown parsers?
+      return parsers[v] ~= nil
     end,
     languages
   )
