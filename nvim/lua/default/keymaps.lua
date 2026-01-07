@@ -51,3 +51,7 @@ keymap('n', '<leader>dd', function()
 end)
 keymap('n', '<leader>dl', vim.diagnostic.setloclist, { desc = 'Open diagnostics in location list' })
 -- ...existing code...
+--
+-- change occurances
+keymap('n', '<leader>sa', ':%s///g<Left><Left>', opts)    -- Substitute in whole file (global)
+keymap('n', '<leader>sl', ':s///g<Left><Left>', opts)     -- Substitute on current line (global)
